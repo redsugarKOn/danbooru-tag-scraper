@@ -12,6 +12,7 @@ A Python script tool for scraping tag description information from Danbooru. Thi
 ## Update
 
 **2025-7-1**
+
 Merge the tag filter and main functionality into `danbooru_scraper_M.py`, now allowing for multithreading processing and tag filtering through a single program.
 
 ---
