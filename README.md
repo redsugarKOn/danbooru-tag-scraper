@@ -32,7 +32,7 @@ A Python script tool for scraping tag description information from Danbooru. Thi
 
 ## Usage
 
-**danbooru_scraper.py**
+**danbooru_scraper.py[OLD]**
 
 1. Create an input file (tag_list.txt) with one tag per line
 
