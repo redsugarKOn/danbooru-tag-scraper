@@ -27,6 +27,11 @@ def get_tag_category(tag_name):
 def clean_description(description, tag_name):
     # Remove sections starting with 'h4.' and their content
     description = re.sub(r'h4\..*?(?=\n\n|\Z)', '', description, flags=re.DOTALL)
+    # Remove [[ and ]] and their content, but keep the text inside, handling '|' as well
+    description = re.sub(r'\[\[(.*?)(?:\|.*?)?\]\]', r'\1', description)
+    # Remove {{ and }} and their content, but keep the text inside, handling '|' as well
+    description = re.sub(r'\{\{(.*?)(?:\|.*?)?\}\}\s*\\?', r'\1', description)
+
     # Remove [b] and [/b]
     description = description.replace('[b]', '').replace('[/b]', '')
     # Remove [i] and [/i]
