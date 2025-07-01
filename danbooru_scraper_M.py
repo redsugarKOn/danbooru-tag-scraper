@@ -4,12 +4,14 @@ import re
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from urllib.parse import quote
 
 def get_tag_category(tag_name):
     """
     Checks the category of a given tag on Danbooru.
     """
-    url = f"https://danbooru.donmai.us/tags.json?search[name]={tag_name}"
+    encoded_tag_name = quote(tag_name)
+    url = f"https://danbooru.donmai.us/tags.json?search[name]={encoded_tag_name}"
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
@@ -25,10 +27,6 @@ def get_tag_category(tag_name):
 def clean_description(description, tag_name):
     # Remove sections starting with 'h4.' and their content
     description = re.sub(r'h4\..*?(?=\n\n|\Z)', '', description, flags=re.DOTALL)
-    # Remove [[ and ]] and their content, but keep the text inside, handling '|' as well
-    description = re.sub(r'\[\[(.*?)(?:\|.*?)?\]\]', r'\1', description)
-    # Remove {{ and }} and their content, but keep the text inside, handling '|' as well
-    description = re.sub(r'\{\{(.*?)(?:\|.*?)?\}\}\s*\\?', r'\1', description)
     # Remove [b] and [/b]
     description = description.replace('[b]', '').replace('[/b]', '')
     # Remove [i] and [/i]
@@ -39,11 +37,7 @@ def clean_description(description, tag_name):
     # Remove the specific phrase "Note: This tag is help:autotags added to images."
     description = description.replace('Note: This tag is help:autotags added to images.', '').strip()
     # Remove tag name prefix
-    if description.lower().startswith(tag_name.lower()):
-        description = description[len(tag_name):].strip()
-        if description.startswith(':'):
-            description = description[1:].strip()
-    
+        
     # Simplify whitespace
     description = re.sub(r'\s+', ' ', description.replace('\n', ' ')).strip()
     
@@ -55,7 +49,8 @@ def clean_description(description, tag_name):
 
 def get_tag_description(tag_name):
     """Fetch and clean tag description from Danbooru wiki"""
-    url = f"https://danbooru.donmai.us/wiki_pages.json?search[title]={tag_name}"
+    encoded_tag_name = quote(tag_name)
+    url = f"https://danbooru.donmai.us/wiki_pages.json?search[title]={encoded_tag_name}"
     try:
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
@@ -200,3 +195,5 @@ if __name__ == "__main__":
         print(f"Error: File not found - {input_file_path}")
     else:
         process_tags(input_file_path, max_workers)
+
+
